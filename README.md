@@ -51,7 +51,7 @@ Aquar理论上可以运行在任何X86设备上，但建议至少运行在j4125�
 
 ### 硬盘
 
-系统盘：建议使用固态硬盘以保证系统流畅。
+系统盘：建议使用固态硬盘以保证系统流畅, 为了保证数据不崩溃，系统盘也是用raid1进行安装（PVE特性）。
 
 数据盘：由于文件系统需要长期运行，并会经常伴随读写，所以需要避开叠瓦盘（SMR）。另外由于至少需要组成RAID1阵列来保证数据安全，所以至少需要两块数据盘。
 
@@ -94,7 +94,7 @@ Aquar理论上可以运行在任何X86设备上，但建议至少运行在j4125�
 
 取得一个公网IP对于提升系统易用性的好处是很大的。最直接的好处就是你可以通过DDNS工具来让自己在公网上直接访问到Aquar上的服务，否则你就需要借助各种内网穿透手段达到相同的目的。另外一点也很重要，就是远程桌面软件parsec在没有公网IP的情况下将很难建立起连接，而parsec恰恰是目前远程桌面软件中体验最好的那个。
 
-如果你无法获取公网IPv4地址也不用担心，随着IPv6的发展，现在的主流家用宽带都已经能够分配IPv6地址，而IPv6地址天生就是公网地址。你可以打电话给宽带的运营人员，把家里的光猫设置为桥接模式，并在自己的路由器中打开ipv6功能。通过重启路由器或者等待一段时间（几小时或几天），等到整个局域网中的设备都使用了桥接模式下的新IPv6地址。此时就可以去专门IPv6测试网站上测试一下你的IPv6连通性如何了，如果测试通过了，你大概率就可以顺利使用parsec、ddns等依赖公网ip的工具了。
+如果你无法获取公网IPv4地址也不用担心，随着IPv6的发展，现在的主流家用宽带都已经能够分配IPv6地址，而IPv6地址天生就是公网地址。你可以打电话给宽带的运营人员，**把家里的光猫设置为桥接模式**，并在自己的路由器中打开ipv6功能。通过重启路由器或者等待一段时间（几小时或几天），等到整个局域网中的设备都使用了桥接模式下的新IPv6地址。此时就可以去专门IPv6测试网站上测试一下你的IPv6连通性如何了，如果测试通过了，你大概率就可以顺利使用parsec、ddns等依赖公网ip的工具了。
 
 ### 场地
 
@@ -116,7 +116,7 @@ Aquar涉及的系统安装过程在网上有很多优秀的文章，建议配合
 
 pve的镜像官网下载页面：https://www.proxmox.com/en/downloads/category/iso-images-pve
 
-我目前使用的版本是7.1-7，建议直接下载最新版本即可。
+我目前使用的版本是8.3-1，建议直接下载最新版本即可。
 
 **2.制作启动盘**
 
@@ -128,7 +128,7 @@ Etcher下载地址：[https://pve.proxmox.com/pve-docs/pve-admin-guide.html#inst
 
 将启动盘插入物理机，重启进入BIOS，选择从启动盘启动，然后进入安装流程。
 
-安装过程中pve会让你设置一个域名，并不关键，按默认即可。
+在选择安装磁盘时，打开高级选项, 选择raid1(zfs), 然后选中两块SSD进行系统的安装。安装过程中pve会让你设置一个域名，并不关键，按默认即可。
 
 安装流程的官方文档：https://pve.proxmox.com/pve-docs/pve-admin-guide.html#installation_installer
 
@@ -138,15 +138,13 @@ PVE安装完成后，首先在你的物理机屏幕上会显示出服务的IP地
 
 ![71ae5380b5c1d90f369752231d03b96c.png](./_resources/b560cb87377441b99f65262a4b403739.png)
 
-### 安装TrueNAS core
+### 安装TrueNAS scale
 
-最近TrueNas推出了基于Linux的TrueNAS scale，对Linux生态友好了很多，这使得TrueNAS scale上可以直接搭载Docker服务。但由于Aquar使用PVE这种虚拟化平台作为底层系统，所以没有必要在TrueNAS 上搭载其他服务，所以仍然选择经受了长期考验的TrueNAS  core作为存储管理中心。
+按照用新不用旧的原则, 考虑使用TrueNAS scale作为存储管理。
 
 **1.下载镜像**
 
-TrueNAS core的下载页面：https://www.truenas.com/download-truenas-core/
-
-刚进入时会提示你注册，点击右下角的No Thanks即可看到下载链接了。推荐直接下载最新版本即可。
+TrueNAS scale的[下载页面](https://www.truenas.com/download-truenas-scale/), 刚进入时会提示你注册，点击右下角的No Thanks即可看到下载链接了。推荐直接下载最新版本即可。
 
 **2.上传镜像到PVE**
 
@@ -233,11 +231,13 @@ TrueNAS安装成功后应该可以在console上看到类似下面的提示，在
 
 **1.下载镜像**
 
-由于我们使用ubuntu的作用主要是承载各种服务而非直接与之交互，所以选择没有GUI的Ubuntu Server版本。
+在一些UI开发的项目中, 测试linux的UI情况也是值得考虑的, 除了在mac上除了parallel貌似没有很好的工具, 其实虚拟机也很好, 所以采用GUI的Ubuntu desktop版本, 虽然debian更为稳定, 但是考虑到desktop版本多数还是ubuntu为主, 所以采用了ubuntu。
 
 Ubuntu Server下载页面：https://cn.ubuntu.com/download/server/step1
 
-选择最新的LTS版本即可，目前最新的LTS版本是22，我使用的是20版本。
+desktop下载页面: https://cn.ubuntu.com/download/desktop
+
+选择最新的LTS版本即可，目前最新的LTS版本是24，我使用的是24版本。
 
 **2.上传镜像**
 
