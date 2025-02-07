@@ -138,6 +138,11 @@ PVE安装完成后，首先在你的物理机屏幕上会显示出服务的IP地
 
 ![71ae5380b5c1d90f369752231d03b96c.png](./_resources/b560cb87377441b99f65262a4b403739.png)
 
+**4.修改网络配置**
+
+在虚拟机中添加新的网桥vmbr1，参考[在pve中搭建一个静态ip的虚拟网络](./details/在pve中搭建一个静态ip的虚拟网络.md)，重启pve, 并在此后的所有虚拟机安装前先将vmbr1加入相关的硬件设置。
+
+
 ### 安装TrueNAS scale
 
 按照用新不用旧的原则, 考虑使用TrueNAS scale作为存储管理。
@@ -196,15 +201,15 @@ CPU分配了2核，另外CPU类型选择了host，在单机情况下这样设置
 
 进入到确认页面后点击创建就可以了。我的目前使用的配置如下：
 
-![1be067cbc7038c6653c2b9f7869b1e8f.png](./_resources/2b344f248a2647bb96e4a496f424b3a6.png)
+![alt text](_resources/truenas_option.png)
 
-![c83fcfc4e8784f2974ecf84a2ed740dd.png](./_resources/0f18528369dd4a19801c791e56addd1b.png)
+![alt text](_resources/truenas_hardware.png)
 
 虚拟机创建成功后，打开他的console应该就可以看到安装提示了。
 
 ![a854d74c7a01bfc6251f4dd0224f3449.png](./_resources/b3fb53bede9346178f391a6b184df223.png)
 
-**4.安装TrueNAS core**
+**4.安装TrueNAS**
 
 TrueNAS官方文档：https://www.truenas.com/docs/core/corepreviousversion/
 
@@ -216,22 +221,26 @@ TrueNAS官方文档：https://www.truenas.com/docs/core/corepreviousversion/
 
 ![chrome_KfH3snsPtM.png](./_resources/chrome_KfH3snsPtM.png)
 
-
 **5.验证安装**
 
 TrueNAS安装成功后应该可以在console上看到类似下面的提示，在局域网中使用浏览器打开提示中的地址应该就可以看到TrueNAS的Web页面了。
 
 ![c27cc096e4bd125f2f38f0450f6196b6.png](./_resources/9c0142e672b5433fa2ab9e41e2622b0e.png)
 
-默认用户名是root，密码是在安装时设置。
+默认用户名是truenas_admin，密码是在安装时设置。
 
 ![e4fed4db149be59b95f8ccd61ffe70e7.png](./_resources/897172a0a0524ba9ab1526da2e5281ea.png)
+
+网络设置如下, 第一张通过DHCP联网, 第二张通过静态IP地址构建管理网络。
+![alt text](_resources/truenas_network.png)
+
 
 ### 安装ubuntu
 
 **1.下载镜像**
 
 在一些UI开发的项目中, 测试linux的UI情况也是值得考虑的, 除了在mac上除了parallel貌似没有很好的工具, 其实虚拟机也很好, 所以采用GUI的Ubuntu desktop版本, 虽然debian更为稳定, 但是考虑到desktop版本多数还是ubuntu为主, 所以采用了ubuntu。
+当然为了管理方便可以考虑两个版本都安装, 在server上运行docker服务, 在desktop上运行桌面环境和相关测试。
 
 Ubuntu Server下载页面：https://cn.ubuntu.com/download/server/step1
 
@@ -268,6 +277,21 @@ Ubuntu Server官方文档的安装指引：https://ubuntu.com/server/docs/instal
 在PVE中找到Ubuntu的虚拟机，并进入Console界面，多按动几次回车键，如果看到类似的提示，则输入你安装时设置的用户名和密码。如果登录成功则说明系统正常运行了。
 
 ![8f787ae812fea983cf1bb040bc88cd81.png](./_resources/3b78bed3d5c24da99bf14c39d9322f27.png)
+
+
+### 安装debian
+考虑稳定和开源，还是使用debian作为服务器操作系统。
+
+**1.下载镜像**
+从[地址](https://www.debian.org/distrib/)下载完整的镜像文件。
+
+**2.上传镜像**
+与TrueNAS章节的上传操作一致，不再重复。
+
+**3.创建虚拟机**
+与TrueNAS章节的创建操作类似，在此列出我配置好的信息截图。
+
+
 
 ### 安装Windows（可选）
 
