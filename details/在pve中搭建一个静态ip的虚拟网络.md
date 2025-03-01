@@ -95,3 +95,13 @@ network:
 执行完以后执行`netplan apply`重载网络配置，这时候因为机器主网卡是dhcp的，有可能ip会飘走，这时你的ssh命令行可能会卡住。这时候退出命令行工具，直接使用pve的console登录系统，使用`p addr show`命令查看网络设备的ip地址，如果前面的配置正确，那么就可以看到两张网卡都获得了自己的ip地址。
 
 ![0c748919c38fe3c5446b7e3cb8d034dd.png](../_resources/0c748919c38fe3c5446b7e3cb8d034dd.png)
+
+## debian的网口设置
+
+```shell
+auto ens19
+iface ens19 inet static
+    address 192.168.172.3
+    netmask 255.255.255.0
+    post-up ip route add 192.168.172.0/24 dev ens19 via 0.0.0.0 metric 100
+```
