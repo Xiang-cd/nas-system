@@ -291,6 +291,13 @@ Ubuntu Server官方文档的安装指引：https://ubuntu.com/server/docs/instal
 **3.创建虚拟机**
 与TrueNAS章节的创建操作类似，在此列出我配置好的信息截图。
 
+**4.安装Debian**
+
+因为不使用桌面环境, 所以在软件勾选时不要勾选桌面环境相关的软件, 记得勾选ssh server。
+此外在安装过程中会提示你选择apt源, 这里选择一个国内的源就可以了。
+![alt text](_resources/debian-software.png)
+
+
 
 
 ### 安装Windows（可选）
